@@ -90,5 +90,31 @@ This is a stateless authentication mechanism as user state is never saved in ser
 
 ## Role-based access control (RBAC) vs. Attribute-based access control (ABAC) 
 
+### Role-based access control (RBAC) 
+A role in RBAC language typically refers to a group of people that share certain characteristics, such as:
+- Departments
+- Locations
+- Seniority levels 
+- Work duties
 
-## Open FGA 
+With a role defined, you can assign permissions. Those might involve:
+
+- Access. What can the person see?
+- Operations. What can the person read? What can the person write? Can the person create or delete files?
+- Sessions. How long can the person stay in the system? 
+
+There are four subtypes of RBAC in case you need a bit more flexibility.
+
+1. Flat: All employees have at least one role that defines permissions, but some have more than one.
+2. Hierarchical: Seniority levels define how roles work together. Senior executives have their own permissions, but they also have those attained by their underlings.
+3. Constrained: Separation of duties is added, and several people work on one task together. This helps to ensure security and prevent fraudulent activities.
+4. Symmetrical: Role permissions are reviewed frequently, and permissions change as the result of that review.
+
+### Attribute-based access control (ABAC) 
+As the administrator of a system using ABAC, you can set permissions by:
+
+- User/Subject. A person's job title, typical tasks, or seniority level could determine the work that can be done.
+- Resource/Object attributes. The type of file, the person who made it, or the document's sensitivity could determine access.
+- Environment Where the person is accessing the resource/object, or the calendar date could determine access.
+- Operation - What is the person trying to do with said resource/object? Read? Write? Delete? 
+
