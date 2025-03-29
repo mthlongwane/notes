@@ -64,4 +64,29 @@ Example: Core Java Plugins
     - Adds additional build config for speicifying the main class.
     - Adds additional tasks to run the executeable application.
 
+## Gradle Tasks 
+Tasks are the basic unit of work in Gradle.
+Task belong to projects or subprojects and each can have different tasks based on the plugins applied.
+```
+ ./gradlew tasks //displays subset of tasks  
+ ./gradlew tasks --all  // displays all tasks available 
+ ./gradlew :subproject:taskname // how to specify task on a app subproject
+```
+
+In order for your task to display dependencies you ned to set the following config on gradle.properties
+```
+org.gradle.console=verbose
+```
+
+When a task is run on the root project it might also run the same task on subprojects.
+
+Output files are typically put in the build directory. Outputs of the tasks file should be excluded from checking into version control.
+
+## Gradle Properties
+Gradle properties can be configured in multiple locations. 
+1. Command line, set using the -D flag
+2. gradle.properties file in the GRADLE_USER_HOME directory.
+3. gradle.properties file in the projects directory, then its parents project directory up to the build's root directory.
+4. gradle.properties file in the Gradle installation directory.
+
 ### -
