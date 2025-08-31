@@ -1,0 +1,82 @@
+architecture-beta
+    group portal(cloud)[Portal]
+    group robot(cloud)[Robot]    
+    group channelApis(cloud)[Channel Public APIs]
+    group backendProductServices(cloud)[Backend Product Services]
+    group sharedServices(cloud)[Shared Services]
+    
+    %% Portal 
+    service apiclientPortal(server)[Portal API Client] in portal
+    service mqttClientPortal(logos:rabbitmq)[MQTT Client Publisher] in portal
+
+    %% Robot 
+    service apiclientRobot(server)[Robot API Client] in robot
+    service robotOS(logos:ros)[RobotOS] in robot
+    service mqttClientRobot(logos:rabbitmq)[MQTT Client Subscriber] in robot
+    service deviceSecurityModule(logos:aws-secrets-manager)[Device Security Module] in robot
+
+    %% Channel Public APIs 
+    service portal-channel-api-Server(server)[Portal Channel API Server] in channelApis
+    service robot-channel-api-Server(server)[Robot Channel API Server] in channelApis
+    service mqttBroker(logos:aws-mq)[MQTT Broker] in channelApis
+    service partnerAPI(server)[Public Partner API] in channelApis
+
+    %% Backend Product Services
+    service reverseProxy(server)[Reverse Proxy or API Gateway] in backendProductServices
+
+    service api-module1-Server(server)[API Module 1 Server] in backendProductServices
+    service db(logos:aws-aurora)[Database] in backendProductServices
+
+    service api-permissions-Server(server)[API Permissions Server] in backendProductServices
+    service openfga-Instance(logos:auth0)[OpenFGA Instance] in backendProductServices
+    service open-fga-db(logos:aws-aurora)[OpenFGA Database] in backendProductServices
+
+    service audit-api(server)[Audit API] in backendProductServices
+    service audit-db(logos:aws-aurora)[Audit Database] in backendProductServices
+
+    service serverSecurityModule(logos:aws-secrets-manager)[Server Security Module] in backendProductServices
+    service idp(logos:oauth)[Identity Provider] in channelApis
+    service openai(logos:openai)[AI Services] in sharedServices
+
+    junction junctionRevProxy in backendProductServices
+    junction junctionAudit in backendProductServices
+    
+    %% Client Modules
+    %% apiclientPortal:R -- L:mqttClientPortal
+    %% apiclientRobot:R -- L:mqttClientRobot
+
+    %% MQTT Broker Services  
+    mqttBroker{group}:B <-- T:mqttClientPortal{group}
+    mqttBroker{group}:T --> B:mqttClientRobot{group}
+
+    %% Channel APIs 
+    portal-channel-api-Server:T -- B:robot-channel-api-Server
+    portal-channel-api-Server{group}:B -- T:apiclientPortal{group}
+    robot-channel-api-Server{group}:T -- B:apiclientRobot{group}
+    
+    %% Product Services
+    reverseProxy{group}:R -- L:portal-channel-api-Server{group}
+    reverseProxy{group}:R -- L:robot-channel-api-Server{group}
+    
+    reverseProxy:L -- R:junctionRevProxy 
+    junctionRevProxy:T -- B:api-module1-Server 
+    junctionRevProxy:L -- R:api-permissions-Server
+    junctionRevProxy:B -- T:serverSecurityModule
+
+    api-module1-Server:T -- B:db
+
+    api-module1-Server:L -- R:junctionAudit
+    api-permissions-Server:T --B:junctionAudit
+    junctionAudit:T -- B:audit-api
+
+    api-permissions-Server:L -- R:openfga-Instance
+    openfga-Instance:L -- R:open-fga-db
+
+    
+    audit-api:L -- R:audit-db
+
+    
+
+    
+    
+    
